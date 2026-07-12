@@ -19,13 +19,17 @@ pr nvim [
   sync = `clone`
 ] {}
 
-var string kiru_dir = `${workdir}/kiru`;
-
-pr kiru [
-  url = `git@github.com:infraflakes/kiru.git`
-  dir = $kiru_dir
+pr dots [
+  url = `git@github.com:infraflakes/imperative-dots.git`
+  dir = `${workdir}/dots`
   sync = `clone`
-  branch = `dev`
-] {}
-
-import `${kiru_dir}/.kiru/main.kiru`;
+] {
+  fn init {
+    log `Symlinking with stow...`;
+    exec `stow -t ~/.config config --adopt`;
+  }
+  fn remove {
+    log `Removing stow's symlink...`;
+    exec `stow -D -t ~/.config config --adopt`;
+  }
+}
