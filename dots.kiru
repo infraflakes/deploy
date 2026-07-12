@@ -1,0 +1,24 @@
+var shell workdir = `echo $HOME/Projects`;
+
+pr dots [
+  url = `git@github.com:infraflakes/imperative-dots.git`
+  dir = `${workdir}/dots`
+  sync = `clone`
+] {}
+
+pr svim [
+  url = `git@github.com:infraflakes/svim.git`
+  dir = `${workdir}/svim`
+  sync = `clone`
+] {}
+
+pr swm [
+  url = `git@github.com:infraflakes/swm.git`
+  dir = `${workdir}/swm`
+  sync = `clone`
+] {
+  fn build {
+    log `Building swm...`;
+    exec `go build -o bin/swm .`;
+  }
+}
