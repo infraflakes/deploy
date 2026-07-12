@@ -1,4 +1,13 @@
 var shell workdir = `echo $HOME`;
+
+var shell confdir= `echo $HOME/.config`;
+
+pr nvim [
+  url = `git@github.com:infraflakes/svim.git`
+  dir = `${confdir}/nvim`
+  sync = `clone`
+] {}
+
 var string kiru_dir = `${workdir}/kiru`;
 
 pr kiru [

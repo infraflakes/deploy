@@ -6,15 +6,17 @@ pr dots [
   sync = `clone`
 ] {}
 
+var shell confdir = `echo $HOME/.config`;
+
 pr svim [
   url = `git@github.com:infraflakes/svim.git`
-  dir = `${workdir}/svim`
+  dir = `${confdir}/nvim`
   sync = `clone`
 ] {}
 
 pr swm [
   url = `git@github.com:infraflakes/swm.git`
-  dir = `${workdir}/swm`
+  dir = `${confdir}/swm`
   sync = `clone`
 ] {
   fn build {

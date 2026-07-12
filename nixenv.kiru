@@ -4,6 +4,19 @@ pr nix [
   url = `git@github.com:infraflakes/nixenv.git`
   dir = `${workdir}/nix`
   sync = `clone`
+] {
+  fn eval {
+    log `Applying home manager flake...`;
+    exec `home-manager switch --flake .#nixenv@nixenv`;
+  }
+}
+
+var shell confdir= `echo $HOME/.config`;
+
+pr nvim [
+  url = `git@github.com:infraflakes/svim.git`
+  dir = `${confdir}/nvim`
+  sync = `clone`
 ] {}
 
 var string kiru_dir = `${workdir}/kiru`;
