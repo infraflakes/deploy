@@ -1,0 +1,18 @@
+var shell workdir = `echo $HOME`;
+
+pr nix [
+  url = `git@github.com:infraflakes/nixenv.git`
+  dir = `${workdir}/nix`
+  sync = `clone`
+] {}
+
+var string kiru_dir = `${workdir}/kiru`;
+
+pr kiru [
+  url = `git@github.com:infraflakes/kiru.git`
+  dir = $kiru_dir
+  sync = `clone`
+  branch = `dev`
+] {}
+
+import `${kiru_dir}/.kiru/main.kiru`;
