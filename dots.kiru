@@ -4,7 +4,16 @@ pr dots [
   url = `git@github.com:infraflakes/imperative-dots.git`
   dir = `${workdir}/dots`
   sync = `clone`
-] {}
+] {
+  fn init {
+    log `Symlinking with stow...`;
+    exec `stow -t ~/.config config`;
+  }
+  fn remove {
+    log `Removing stow's symlink...`;
+    exec `stow -D -t ~/.config config`;
+  }
+}
 
 var shell confdir = `echo $HOME/.config`;
 
