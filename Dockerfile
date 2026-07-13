@@ -24,4 +24,6 @@ RUN curl -sSf https://raw.githubusercontent.com/infraflakes/kiru/main/install.sh
 
 RUN curl -sSf https://raw.githubusercontent.com/infraflakes/sutils/main/install.sh | sh
 
+RUN git clone --depth=1 https://github.com/infraflakes/deploy
+
 CMD ["sh", "-c", "/usr/bin/fish"]

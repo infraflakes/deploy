@@ -11,12 +11,24 @@ pr dots [
     exec `git pull origin main`;
   }
   fn init {
-    log `Symlinking with stow...`;
-    exec `stow -t ~/.config config`;
+    var string fish_dir = `${confdir}/fish`;
+    var shell fish_exist = `test -f ${fish_dir}/config.fish && echo "1"`;
+    case $fish_exist {
+      `1` {
+        log `Removing stale fish config...`;
+        exec `rm -rf ${fish_dir}`;
+        log `Symlinking with stow...`;
+        exec `stow -t ${confdir} config`;
+      };
+      _ {
+        log `Symlinking with stow...`;
+        exec `stow -t ${confdir} config`;
+      };
+    };
   }
   fn remove {
     log `Removing stow's symlink...`;
-    exec `stow -D -t ~/.config config`;
+    exec `stow -D -t ${confdir} config`;
   }
 }
 
