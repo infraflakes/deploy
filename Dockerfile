@@ -10,6 +10,7 @@ USER $USERNAME
 WORKDIR /home/$USERNAME
 ENV USER=$USERNAME
 ENV HOME=/home/$USERNAME
+ENV PATH="/home/$USERNAME/.local/bin:${PATH}"
 
 # flake configuration
 RUN mkdir -p ~/.config/nix && \
