@@ -1,0 +1,14 @@
+pr swm [
+  url = `git@github.com:infraflakes/swm.git`
+  dir = `${confdir}/swm`
+  sync = `clone`
+] {
+  fn update {
+    log `Pulling new changes...`;
+    exec `git pull origin main`;
+  }
+  fn build {
+    log `Building swm...`;
+    exec `go build -o bin/swm .`;
+  }
+}

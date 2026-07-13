@@ -1,33 +1,19 @@
-var shell workdir = `echo $HOME`;
-
+var shell workdir = `echo $HOME/Projects`;
 var shell confdir= `echo $HOME/.config`;
 
-pr nvim [
-  url = `git@github.com:infraflakes/svim.git`
-  dir = `${confdir}/nvim`
-  sync = `clone`
-] {}
+import `repos/nvim.kiru`;
 
 var string kiru_dir = `${workdir}/kiru`;
-
 pr kiru [
   url = `git@github.com:infraflakes/kiru.git`
   dir = $kiru_dir
   sync = `clone`
   branch = `dev`
 ] {}
-
 import `${kiru_dir}/.kiru/main.kiru`;
 
 pr portfolio [
   url = `git@github.com:infraflakes/infraflakes.github.io.git`
-  dir = `portfolio`
+  dir = `${workdir}/portfolio`
   sync = `ignore`
-] {}
-
-pr srwc [
-  url = `https://github.com/infraflakes/srwc.git`
-  dir = `srwc`
-  sync = `ignore`
-  branch = `architectural-cleanups`
 ] {}
