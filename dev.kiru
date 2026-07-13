@@ -1,8 +1,6 @@
 var shell workdir = `echo $HOME/Projects`;
 var shell confdir= `echo $HOME/.config`;
 
-import `repos/nvim.kiru`;
-
 var string kiru_dir = `${workdir}/kiru`;
 pr kiru [
   url = `git@github.com:infraflakes/kiru.git`
@@ -10,7 +8,6 @@ pr kiru [
   sync = `clone`
   branch = `dev`
 ] {}
-import `${kiru_dir}/.kiru/main.kiru`;
 
 pr portfolio [
   url = `git@github.com:infraflakes/infraflakes.github.io.git`
