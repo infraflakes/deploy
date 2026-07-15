@@ -10,7 +10,7 @@ pr nix [
 ] {
   fn eval {
     log `Applying home manager flake...`;
-    exec `home-manager switch --flake .#nixenv@nixenv`;
+    exec `home-manager switch --flake .#nixenv@container`;
   }
   fn update {
     log `Pulling new changes...`;

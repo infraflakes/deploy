@@ -1,6 +1,40 @@
 var shell workdir = `echo $HOME/Projects`;
 var shell confdir = `echo $HOME/.config`;
 
+var string nixdir = `${workdir}/nix`;
+var shell check_source_nix = `test -f "$HOME/.ssh/id_ed25519.pub" && git -C "${nixdir}" remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
+pr nix [
+  url = `https://github.com/infraflakes/nixenv.git`
+  dir = $nixdir
+  sync = `clone`
+] {
+  fn eval {
+    log `Applying home manager flake...`;
+    exec `home-manager switch --flake .#nixuris@desktop`;
+  }
+  fn update {
+    log `Pulling new changes...`;
+    exec `nix flake update`;
+  }
+  fn switch_source {
+    case $check_source_nix {
+      `1` {
+        log `Switching url source...`;
+        exec `git remote set-url origin git@github.com:infraflakes/nixenv.git`;
+      };
+      _ {
+        log `Source is already switched, or not enough condition.`;
+      };
+    };
+  }
+  run eval {
+    switch_source => eval;
+  }
+  run update {
+    switch_source => update;
+  }
+}
+
 var string dotsdir = `${workdir}/dots`;
 var shell check_source_dots = `test -f "$HOME/.ssh/id_ed25519.pub" && git -C "${dotsdir}" remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
 pr dots [

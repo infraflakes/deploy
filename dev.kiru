@@ -12,5 +12,5 @@ pr kiru [
 pr portfolio [
   url = `git@github.com:infraflakes/infraflakes.github.io.git`
   dir = `${workdir}/portfolio`
-  sync = `ignore`
+  sync = `clone`
 ] {}
