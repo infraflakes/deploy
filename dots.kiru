@@ -1,11 +1,9 @@
 var shell workdir = `echo $HOME/Projects`;
 var shell confdir = `echo $HOME/.config`;
 
-var string nixdir = `${workdir}/nix`;
-var shell check_source_nix = `test -f "$HOME/.ssh/id_ed25519.pub" && git -C "${nixdir}" remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
 pr nix [
   url = `https://github.com/infraflakes/nixenv.git`
-  dir = $nixdir
+  dir = `${workdir}/nix`
   sync = `clone`
 ] {
   fn eval {
@@ -16,8 +14,9 @@ pr nix [
     log `Pulling new changes...`;
     exec `nix flake update`;
   }
+  var shell check_source = `test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
   fn switch_source {
-    case $check_source_nix {
+    case $check_source {
       `1` {
         log `Switching url source...`;
         exec `git remote set-url origin git@github.com:infraflakes/nixenv.git`;
@@ -27,26 +26,19 @@ pr nix [
       };
     };
   }
-  run eval {
-    switch_source => eval;
-  }
-  run update {
-    switch_source => update;
-  }
 }
 
-var string dotsdir = `${workdir}/dots`;
-var shell check_source_dots = `test -f "$HOME/.ssh/id_ed25519.pub" && git -C "${dotsdir}" remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
 pr dots [
-  url = `git@github.com:infraflakes/imperative-dots.git`
-  dir = `${dotsdir}`
+  url = `git@github.com:infraflakes/dots.git`
+  dir = `${workdir}/dots`
   sync = `clone`
 ] {
+  var shell check_source = `test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
   fn switch_source {
-    case $check_source_dots {
+    case $check_source {
       `1` {
         log `Switching url source...`;
-        exec `git remote set-url origin git@github.com:infraflakes/imperative-dots.git`;
+        exec `git remote set-url origin git@github.com:infraflakes/dots.git`;
       };
       _ {
         log `Source is already switched, or not enough condition.`;
@@ -77,30 +69,20 @@ pr dots [
     log `Removing stow's symlink...`;
     exec `stow -D -t ${confdir} config`;
   }
-  run update {
-    switch_source => update;
-  }
-  run init {
-    switch_source => init;
-  }
-  run remove {
-    switch_source => remove;
-  }
 }
 
-var string nvimdir = `${confdir}/nvim`;
-var shell check_source_nvim = `test -f "$HOME/.ssh/id_ed25519.pub" && git -C "${nvimdir}" remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
 pr svim [
   url = `https://github.com/infraflakes/svim.git`
-  dir = $nvimdir
+  dir = `${confdir}/nvim`
   sync = `clone`
 ] {
   fn update {
     log `Pulling new changes...`;
     exec `git pull origin main`;
   }
+  var shell check_source = `test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
   fn switch_source {
-    case $check_source_nvim {
+    case $check_source {
       `1` {
         log `Switching url source...`;
         exec `git remote set-url origin git@github.com:infraflakes/svim.git`;
@@ -110,16 +92,11 @@ pr svim [
       };
     };
   }
-  run update {
-    switch_source => update;
-  }
 }
 
-var string swmdir = `${confdir}/swm`;
-var shell check_source_swm = `test -f "$HOME/.ssh/id_ed25519.pub" && git -C "${swmdir}" remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
 pr swm [
   url = `git@github.com:infraflakes/swm.git`
-  dir = $swmdir
+  dir = `${confdir}/swm`
   sync = `clone`
 ] {
   fn update {
@@ -130,8 +107,9 @@ pr swm [
     log `Building swm...`;
     exec `go build -o bin/swm .`;
   }
+  var shell check_source = `test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
   fn switch_source {
-    case $check_source_swm {
+    case $check_source {
       `1` {
         log `Switching url source...`;
         exec `git remote set-url origin git@github.com:infraflakes/swm.git`;
@@ -140,11 +118,5 @@ pr swm [
         log `Source is already switched, or not enough condition.`;
       };
     };
-  }
-  run update {
-    switch_source => update;
-  }
-  run build {
-    switch_source => build;
   }
 }

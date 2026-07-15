@@ -1,11 +1,9 @@
 var shell workdir = `echo $HOME`;
 var shell confdir= `echo $HOME/.config`;
 
-var string nixdir = `${workdir}/nix`;
-var shell check_source_nix = `test -f "$HOME/.ssh/id_ed25519.pub" && git -C "${nixdir}" remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
 pr nix [
   url = `https://github.com/infraflakes/nixenv.git`
-  dir = $nixdir
+  dir = `${workdir}/nix`
   sync = `clone`
 ] {
   fn eval {
@@ -16,8 +14,9 @@ pr nix [
     log `Pulling new changes...`;
     exec `nix flake update`;
   }
+  var shell check_source = `test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
   fn switch_source {
-    case $check_source_nix {
+    case $check_source {
       `1` {
         log `Switching url source...`;
         exec `git remote set-url origin git@github.com:infraflakes/nixenv.git`;
@@ -26,12 +25,6 @@ pr nix [
         log `Source is already switched, or not enough condition.`;
       };
     };
-  }
-  run eval {
-    switch_source => eval;
-  }
-  run update {
-    switch_source => update;
   }
 }
 
@@ -47,7 +40,7 @@ pr svim [
 }
 
 pr dots [
-  url = `https://github.com/infraflakes/imperative-dots.git`
+  url = `https://github.com/infraflakes/dots.git`
   dir = `${workdir}/dots`
   sync = `clone`
 ] {
