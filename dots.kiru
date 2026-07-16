@@ -29,7 +29,7 @@ pr nix [
 }
 
 pr dots [
-  url = `git@github.com:infraflakes/dots.git`
+  url = `https://github.com/infraflakes/dots.git`
   dir = `${workdir}/dots`
   sync = `clone`
 ] {
@@ -95,7 +95,7 @@ pr svim [
 }
 
 pr swm [
-  url = `git@github.com:infraflakes/swm.git`
+  url = `https://github.com:infraflakes/swm.git`
   dir = `${confdir}/swm`
   sync = `clone`
 ] {

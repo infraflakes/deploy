@@ -8,9 +8,11 @@ pr kiru [
   sync = `clone`
   branch = `dev`
 ] {}
+import `${kiru_dir}/main.kiru`;
 
 pr portfolio [
   url = `git@github.com:infraflakes/infraflakes.github.io.git`
   dir = `${workdir}/portfolio`
   sync = `clone`
 ] {}
+import `${workdir}/portfolio/main.kiru`;
