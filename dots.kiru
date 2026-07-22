@@ -1,31 +1,70 @@
 var shell workdir = `echo $HOME/Projects`;
 var shell confdir = `echo $HOME/.config`;
 
+fn update {
+  log `Pulling new changes...`;
+  exec `git pull origin main`;
+}
+
+fn switch_source {
+  var shell check_ssh = `test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
+  case $self::check_ssh {
+    `1` {
+      log `Switching url source...`;
+      exec `git remote set-url origin git@github.com:infraflakes/${self::name}.git`;
+    };
+    _ {
+        log `Source is already switched, or not enough condition.`;
+    };
+  };
+}
+
+fn build {
+  case $self::name {
+    `dots` {
+      var shell fish_exist = `test -f ~/.config/fish/config.fish && echo "1"`;
+      case $self::fish_exist {
+        `1` {
+          log `Removing stale fish config...`;
+          exec `rm -rf ~/.config/fish`;
+          log `Symlinking with stow...`;
+          exec `stow -t ${global::confdir} config`;
+        };
+        _ {
+          log `Symlinking with stow...`;
+          exec `stow -t ${global::confdir} config`;
+        };
+      };
+    };
+    `nixenv` {
+      log `Applying home manager flake...`;
+      exec `home-manager switch --flake .#nixuris@desktop`;
+    };
+    `swm` {
+      log `Building swm...`;
+      exec `go build -o bin/swm .`;
+    };
+  };
+}
+
+fn clean {
+  case $self::name {
+    `dots` {
+      log `Removing stow's symlink...`;
+      exec `stow -D -t ${global::confdir} config`;
+    };
+  };
+}
+
 pr nix [
   url = `https://github.com/infraflakes/nixenv.git`
   dir = `${global::workdir}/nix`
   sync = `clone`
 ] {
-  fn eval {
-    log `Applying home manager flake...`;
-    exec `home-manager switch --flake .#nixuris@desktop`;
-  }
-  fn update {
-    log `Pulling new changes...`;
-    exec `nix flake update`;
-  }
-  var shell check_source = `test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
-  fn switch_source {
-    case $nix::check_source {
-      `1` {
-        log `Switching url source...`;
-        exec `git remote set-url origin git@github.com:infraflakes/nixenv.git`;
-      };
-      _ {
-        log `Source is already switched, or not enough condition.`;
-      };
-    };
-  }
+  var string name = `nixenv`;
+  use update;
+  use switch_source;
+  use build as eval;
 }
 
 pr dots [
@@ -33,42 +72,11 @@ pr dots [
   dir = `${global::workdir}/dots`
   sync = `clone`
 ] {
-  var shell check_source = `test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
-  fn switch_source {
-    case $dots::check_source {
-      `1` {
-        log `Switching url source...`;
-        exec `git remote set-url origin git@github.com:infraflakes/dots.git`;
-      };
-      _ {
-        log `Source is already switched, or not enough condition.`;
-      };
-    };
-  }
-  fn update {
-    log `Pulling new changes...`;
-    exec `git pull origin main`;
-  }
-  fn init {
-    var string fish_dir = `${global::confdir}/fish`;
-    var shell fish_exist = `test -f ${dots::fish_dir}/config.fish && echo "1"`;
-    case $dots::fish_exist {
-      `1` {
-        log `Removing stale fish config...`;
-        exec `rm -rf ${dots::fish_dir}`;
-        log `Symlinking with stow...`;
-        exec `stow -t ${global::confdir} config`;
-      };
-      _ {
-        log `Symlinking with stow...`;
-        exec `stow -t ${global::confdir} config`;
-      };
-    };
-  }
-  fn remove {
-    log `Removing stow's symlink...`;
-    exec `stow -D -t ${global::confdir} config`;
-  }
+  var string name = `dots`;
+  use update;
+  use switch_source;
+  use build as init;
+  use clean as remove;
 }
 
 pr svim [
@@ -76,47 +84,24 @@ pr svim [
   dir = `${global::confdir}/nvim`
   sync = `clone`
 ] {
-  fn update {
-    log `Pulling new changes...`;
-    exec `git pull origin main`;
-  }
-  var shell check_source = `test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
-  fn switch_source {
-    case $svim::check_source {
-      `1` {
-        log `Switching url source...`;
-        exec `git remote set-url origin git@github.com:infraflakes/svim.git`;
-      };
-      _ {
-        log `Source is already switched, or not enough condition.`;
-      };
-    };
-  }
+  var string name = `svim`;
+  use update;
+  use switch_source;
 }
 
 pr swm [
-  url = `https://github.com:infraflakes/swm.git`
+  url = `https://github.com/infraflakes/swm.git`
   dir = `${global::confdir}/swm`
   sync = `clone`
 ] {
-  fn update {
-    log `Pulling new changes...`;
-    exec `git pull origin main`;
-  }
-  fn build {
-    log `Building swm...`;
-    exec `go build -o bin/swm .`;
-  }
-  var shell check_source = `test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
-  fn switch_source {
-    case $swm::check_source {
-      `1` {
-        log `Switching url source...`;
-        exec `git remote set-url origin git@github.com:infraflakes/swm.git`;
-      };
-      _ {
-        log `Source is already switched, or not enough condition.`;
-      };
-    };
-  }
+  var string name = `swm`;
+  use update;
+  use switch_source;
+  use build;
+}
+
+run bootstrap {
+  nix::eval;
+  dots::init;
+  swm::build;
 }
