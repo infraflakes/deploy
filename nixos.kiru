@@ -6,7 +6,7 @@ fn update {
   exec `git pull origin main`;
 }
 
-fn switch_source {
+fn ssh {
   var shell check_ssh = `test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
   case $self::check_ssh {
     `1` {
@@ -63,7 +63,7 @@ pr dots [
 ] {
   var string name = `dots`;
   use update;
-  use switch_source;
+  use ssh;
   use build as init;
   use clean as remove;
 }
@@ -75,7 +75,7 @@ pr nix [
 ] {
   var string name = `nixenv`;
   use update;
-  use switch_source;
+  use ssh;
   use build as eval;
 }
 
@@ -86,7 +86,7 @@ pr svim [
 ] {
   var string name = `svim`;
   use update;
-  use switch_source;
+  use ssh;
 }
 
 pr swm [
@@ -96,7 +96,7 @@ pr swm [
 ] {
   var string name = `swm`;
   use update;
-  use switch_source;
+  use ssh;
   use build;
 }
 
