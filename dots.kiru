@@ -36,10 +36,6 @@ fn build {
         };
       };
     };
-    `nixenv` {
-      log `Applying home manager flake...`;
-      exec `home-manager switch --flake .#nixuris@desktop`;
-    };
     `swm` {
       log `Building swm...`;
       exec `go build -o bin/swm .`;
@@ -54,17 +50,6 @@ fn clean {
       exec `stow -D -t ${global::confdir} config`;
     };
   };
-}
-
-pr nix [
-  url = `https://github.com/infraflakes/nixenv.git`
-  dir = `${global::workdir}/nix`
-  sync = `clone`
-] {
-  var string name = `nixenv`;
-  use update;
-  use switch_source;
-  use build as eval;
 }
 
 pr dots [
@@ -101,7 +86,6 @@ pr swm [
 }
 
 run bootstrap {
-  nix::eval;
   dots::init;
   swm::build;
 }
