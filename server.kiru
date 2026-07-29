@@ -1,0 +1,89 @@
+var shell workdir = `echo $HOME`;
+var shell confdir = `echo $HOME/.config`;
+
+fn update {
+  log `Pulling new changes...`;
+  exec `git pull origin main`;
+}
+
+fn ssh {
+  var shell check_ssh = `test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1"`;
+  case $self::check_ssh {
+    `1` {
+      log `Switching url source...`;
+      exec `git remote set-url origin git@github.com:infraflakes/${self::name}.git`;
+    };
+    _ {
+        log `Source is already switched, or not enough condition.`;
+    };
+  };
+}
+
+fn build {
+  case $self::name {
+    `dots` {
+      var shell fish_exist = `test -f ~/.config/fish/config.fish && echo "1"`;
+      case $self::fish_exist {
+        `1` {
+          log `Removing stale fish config...`;
+          exec `rm -rf ~/.config/fish`;
+          log `Symlinking with stow...`;
+          exec `stow -t ${global::confdir} config`;
+        };
+        _ {
+          log `Symlinking with stow...`;
+          exec `stow -t ${global::confdir} config`;
+        };
+      };
+    };
+    `nixenv` {
+      log `Building nixos flake...`;
+      exec `sudo nixos-rebuild switch --impure --flake .#nixos`;
+    };
+  };
+}
+
+fn clean {
+  case $self::name {
+    `dots` {
+      log `Removing stow's symlink...`;
+      exec `stow -D -t ${global::confdir} config`;
+    };
+  };
+}
+
+pr dots [
+  url = `https://github.com/infraflakes/dots.git`
+  dir = `${global::workdir}/dots`
+  sync = `clone`
+] {
+  var string name = `dots`;
+  use update;
+  use build as init;
+  use clean as remove;
+}
+
+pr nix [
+  url = `https://github.com/infraflakes/nixenv.git`
+  dir = `${global::workdir}/nix`
+  sync = `clone`
+] {
+  var string name = `nixenv`;
+  use update;
+  use ssh;
+  use build as eval;
+}
+
+pr svim [
+  url = `https://github.com/infraflakes/svim.git`
+  dir = `${global::confdir}/nvim`
+  sync = `clone`
+] {
+  var string name = `svim`;
+  use update;
+}
+
+run bootstrap {
+  nix::eval;
+  dots::init;
+}
