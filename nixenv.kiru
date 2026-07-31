@@ -96,4 +96,5 @@ pr devenv [
 ] {
   var string name = `devenv`;
   use ssh;
+  use update;
 }
