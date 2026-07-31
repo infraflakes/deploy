@@ -89,3 +89,11 @@ run bootstrap {
   nix::eval;
   dots::init;
 }
+
+pr devenv [
+  url = `https://github.com/infraflakes/devenv.git`
+  dir = `${global::confdir}/kiru`
+] {
+  var string name = `devenv`;
+  use ssh;
+}
