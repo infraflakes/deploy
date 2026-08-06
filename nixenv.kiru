@@ -25,10 +25,9 @@ fn build {
       var shell fish_exist = `test -f ~/.config/fish/config.fish && echo "1"`;
       case $self::fish_exist {
         `1` {
-          log `Removing stale fish config...`;
-          exec `rm -rf ~/.config/fish`;
           log `Symlinking with stow...`;
-          exec `stow -t ${global::confdir} config`;
+          exec `stow --adopt -t ${global::confdir} config`;
+          exec `git restore config/fish`;
         };
         _ {
           log `Symlinking with stow...`;
@@ -73,16 +72,6 @@ pr dots [
   use ssh;
   use build as init;
   use clean as remove;
-}
-
-pr svim [
-  url = `https://github.com/infraflakes/svim.git`
-  dir = `${global::confdir}/nvim`
-  sync = `clone`
-] {
-  var string name = `svim`;
-  use update;
-  use ssh;
 }
 
 run bootstrap {

@@ -25,10 +25,9 @@ fn build {
       var shell fish_exist = `test -f ~/.config/fish/config.fish && echo "1"`;
       case $self::fish_exist {
         `1` {
-          log `Removing stale fish config...`;
-          exec `rm -rf ~/.config/fish`;
           log `Symlinking with stow...`;
-          exec `stow -t ${global::confdir} config`;
+          exec `stow --adopt -t ${global::confdir} config`;
+          exec `git restore config/fish`;
         };
         _ {
           log `Symlinking with stow...`;
@@ -38,11 +37,14 @@ fn build {
     };
     `swm` {
       log `Building swm...`;
-      exec `go build -o bin/swm .`;
+      exec `nix develop -c go build -o bin/swm .`;
+    };
+    `nixenv` {
+      log `Building nixos flake...`;
+      exec `home-manager switch --flake .#nixuris@desktop`;
     };
   };
 }
-
 fn clean {
   case $self::name {
     `dots` {
@@ -64,14 +66,15 @@ pr dots [
   use clean as remove;
 }
 
-pr svim [
-  url = `https://github.com/infraflakes/svim.git`
-  dir = `${global::confdir}/nvim`
+pr nix [
+  url = `https://github.com/infraflakes/nixenv.git`
+  dir = `${global::workdir}/nix`
   sync = `clone`
 ] {
-  var string name = `svim`;
+  var string name = `nixenv`;
   use update;
   use ssh;
+  use build as eval;
 }
 
 pr swm [
