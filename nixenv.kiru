@@ -37,7 +37,7 @@ fn build {
     };
     `nixenv` {
       log `Applying home manager flake...`;
-      exec `home-manager switch --flake .#nixuris@container`;
+      exec `home-manager switch --flake .#nixenv@container`;
     };
   };
 }
