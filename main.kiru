@@ -92,11 +92,11 @@ pr devenv {
       };
     };
   }; 
-}
+};
 
 run redeploy_dots {
   dots::remove => dots::init;
-}
+};
 
 run ssh {
   dots::ssh;
