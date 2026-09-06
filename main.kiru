@@ -1,5 +1,4 @@
 var home_dir = $(echo $HOME);
-var project_dir = (@(home_dir)/Projects);
 var config_dir = (@(home_dir)/.config);
 
 pr nix {
