@@ -1,0 +1,114 @@
+var home_dir = $(echo $HOME);
+var config_dir = (@(home_dir)/.config);
+
+pr nix {
+  var name = (nixenv);
+  
+  fn ssh {
+    var check_ssh = $(test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1");
+    switch check_ssh {
+      case (1) {
+        log (Switching url source...);
+        $(git remote set-url origin git@github.com:infraflakes/@(name).git);
+      };
+      case _ {
+        log (Source is already switched, or not enough condition.);
+      };
+    };
+  };
+
+  fn eval {
+    log (Building nixos...);
+    $(nixos-rebuild switch --impure --flake .#nixos);
+  };
+};
+
+pr dots {
+  var name = (dots);
+
+  fn ssh {
+    var check_ssh = $(test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1");
+    switch check_ssh {
+      case (1) {
+        log (Switching url source...);
+        $(git remote set-url origin git@github.com:infraflakes/@(name).git);
+      };
+      case _ {
+        log (Source is already switched, or not enough condition.);
+      };
+    };
+  };
+
+  fn init {
+    var fish_exist = $(test -f ~/.config/fish/config.fish && echo "1");
+    switch fish_exist {
+      case (1) {
+        log (Symlinking with stow...);
+        $(stow --adopt -t @(config_dir) config);
+        $(git restore config/fish);
+      };
+     case _ {
+        log (Symlinking with stow...);
+        $(stow -t @(config_dir) config);
+      };
+    };
+  };
+
+  fn remove {
+    log (Removing stow's symlink...);
+    $(stow -D -t @(config_dir) config);
+  };
+};
+
+pr svim {
+  var name = (svim);
+  
+  fn ssh {
+    var check_ssh = $(test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1");
+    switch check_ssh {
+      case (1) {
+        log (Switching url source...);
+        $(git remote set-url origin git@github.com:infraflakes/@(name).git);
+      };
+      case _ {
+        log (Source is already switched, or not enough condition.);
+      };
+    };
+  };
+};
+
+pr devenv {
+  var name = (devenv);
+  
+  fn ssh {
+    var check_ssh = $(test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1");
+    switch check_ssh {
+      case (1) {
+        log (Switching url source...);
+        $(git remote set-url origin git@github.com:infraflakes/@(name).git);
+      };
+      case _ {
+        log (Source is already switched, or not enough condition.);
+      };
+    };
+  }; 
+}
+
+run redeploy_dots {
+  dots::remove => dots::init;
+}
+
+run ssh {
+  dots::ssh;
+  nix::ssh;
+  svim::ssh;
+  devenv::ssh;
+};
+
+run eval_nix {
+  nix::eval;
+};
+
+run bootstrap {
+  nix::eval => dots::init;
+};
