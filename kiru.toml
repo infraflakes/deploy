@@ -2,11 +2,6 @@ shell = "sh"
 timeout = 300
 
 [[repos]]
-name = "deploy"
-url = "https://github.com/infraflakes/deploy.git"
-dir = "~/.config/kiru"
-
-[[repos]]
 name = "dots"
 url = "https://github.com/infraflakes/dots.git"
 dir = "~/Projects/dots"
