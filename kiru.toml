@@ -1,0 +1,35 @@
+shell = "sh"
+timeout = 300
+direnv = true
+
+[[repos]]
+name = "kiru"
+url = "https://github.com/infraflakes/kiru.git"
+dir = "~/Projects/kiru"
+branch = "dev"
+
+[[repos]]
+name = "portfolio"
+url = "https://github.com/infraflakes/infraflakes.github.io.git"
+dir = "~/Projects/portfolio"
+
+[[repos]]
+name = "deploy"
+url = "https://github.com/infraflakes/deploy.git"
+dir = "~/.config/kiru"
+branch = "dev"
+
+[[repos]]
+name = "dots"
+url = "https://github.com/infraflakes/dots.git"
+dir = "~/dots"
+
+[[repos]]
+name = "nix"
+url = "https://github.com/infraflakes/nixenv.git"
+dir = "~/nix"
+
+[[repos]]
+name = "svim"
+url = "https://github.com/infraflakes/svim.git"
+dir = "~/.config/nvim"

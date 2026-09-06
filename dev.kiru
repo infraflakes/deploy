@@ -1,0 +1,37 @@
+import (@(project_dir)/kiru/main.kiru);
+
+pr kiru {
+  var name = (kiru);
+
+  fn ssh {
+    var check_ssh = $(test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1");
+    switch check_ssh {
+      case (1) {
+        log (Switching url source...);
+        $(git remote set-url origin git@github.com:infraflakes/@(name).git);
+      };
+      case _ {
+        log (Source is already switched, or not enough condition.);
+      };
+    };
+  };
+};
+
+import (@(project_dir)/portfolio/main.kiru);
+
+pr portfolio {
+  var name = (infraflakes.github.io);
+
+  fn ssh {
+    var check_ssh = $(test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1");
+    switch check_ssh {
+      case (1) {
+        log (Switching url source...);
+        $(git remote set-url origin git@github.com:infraflakes/@(name).git);
+      };
+      case _ {
+        log (Source is already switched, or not enough condition.);
+      };
+    };
+  };
+};

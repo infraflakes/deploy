@@ -1,5 +1,13 @@
-Install kiru:
+### Nixenv: containerized and nixified dev environment.
+
+Build:
 
 ```bash
-curl -sSf https://raw.githubusercontent.com/infraflakes/kiru/main/install.sh | bash
+podman build -t nixenv https://github.com/infraflakes/devenv.git
+```
+
+Start with:
+
+```bash
+podman run -it --network=host docker.io/infraflakes/nixenv:latest
 ```
