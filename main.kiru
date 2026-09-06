@@ -78,7 +78,7 @@ pr svim {
 };
 
 pr devenv {
-  var name = (devenv);
+  var name = (deploy);
   
   fn ssh {
     var check_ssh = $(test -f "$HOME/.ssh/id_ed25519.pub" && git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1");
