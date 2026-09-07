@@ -17,7 +17,7 @@ dir = "~/Projects/portfolio"
 name = "deploy"
 url = "https://github.com/infraflakes/deploy.git"
 dir = "~/.config/kiru"
-branch = "dev"
+branch = "devenv"
 
 [[repos]]
 name = "dots"
