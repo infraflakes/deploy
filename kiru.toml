@@ -1,0 +1,17 @@
+shell = "sh"
+timeout = 300
+
+[[repos]]
+name = "dots"
+url = "https://github.com/infraflakes/dots.git"
+dir = "~/dots"
+
+[[repos]]
+name = "nix"
+url = "https://github.com/infraflakes/nixenv.git"
+dir = "~/nix"
+
+[[repos]]
+name = "svim"
+url = "https://github.com/infraflakes/svim.git"
+dir = "~/.config/nvim"

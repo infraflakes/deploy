@@ -1,0 +1,32 @@
+(kirufile
+  (project dots
+    (fn init
+      (switch (t (cmd (t (lit "test -f ~/.config/fish/config.fish && echo \"1\"")))) (case "1" (log (t (lit "Symlinking with stow..."))) (run_shell_cmd (t (cmd (t (lit "stow --adopt -t ") (cmd (t (lit "echo $HOME"))) (lit "/.config") (lit " config"))))) (run_shell_cmd (t (cmd (t (lit "git restore config/fish")))))) (case _ (log (t (lit "Symlinking with stow..."))) (run_shell_cmd (t (cmd (t (lit "stow -t ") (cmd (t (lit "echo $HOME"))) (lit "/.config") (lit " config")))))))
+    )
+    (fn remove
+      (log (t (lit "Removing stow's symlink...")))
+      (run_shell_cmd (t (cmd (t (lit "stow -D -t ") (cmd (t (lit "echo $HOME"))) (lit "/.config") (lit " config")))))
+    )
+    (fn ssh
+      (switch (t (cmd (t (lit "test -f \"$HOME/.ssh/id_ed25519.pub\" && git remote get-url origin 2>/dev/null | grep -q \"^https://\" && echo \"1\"")))) (case "1" (log (t (lit "Switching url source..."))) (run_shell_cmd (t (cmd (t (lit "git remote set-url origin git@github.com:infraflakes/") (lit "dots") (lit ".git")))))) (case _ (log (t (lit "Source is already switched, or not enough condition.")))))
+    )
+  )
+  (project nix
+    (fn eval
+      (log (t (lit "Building nixos...")))
+      (run_shell_cmd (t (cmd (t (lit "nixos-rebuild switch --impure --flake .#server")))))
+    )
+    (fn ssh
+      (switch (t (cmd (t (lit "test -f \"$HOME/.ssh/id_ed25519.pub\" && git remote get-url origin 2>/dev/null | grep -q \"^https://\" && echo \"1\"")))) (case "1" (log (t (lit "Switching url source..."))) (run_shell_cmd (t (cmd (t (lit "git remote set-url origin git@github.com:infraflakes/") (lit "nixenv") (lit ".git")))))) (case _ (log (t (lit "Source is already switched, or not enough condition.")))))
+    )
+  )
+  (project svim
+    (fn ssh
+      (switch (t (cmd (t (lit "test -f \"$HOME/.ssh/id_ed25519.pub\" && git remote get-url origin 2>/dev/null | grep -q \"^https://\" && echo \"1\"")))) (case "1" (log (t (lit "Switching url source..."))) (run_shell_cmd (t (cmd (t (lit "git remote set-url origin git@github.com:infraflakes/") (lit "svim") (lit ".git")))))) (case _ (log (t (lit "Source is already switched, or not enough condition.")))))
+    )
+  )
+  (run bootstrap (stage (call nix eval) (call dots init)))
+  (run deploy_dots (stage (call dots remove) (call dots init)))
+  (run eval_nix (stage (call nix eval)))
+  (run ssh (stage (call dots ssh)) (stage (call nix ssh)) (stage (call svim ssh)))
+)
