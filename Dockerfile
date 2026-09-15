@@ -31,11 +31,11 @@ ENV PATH="/nix/var/nix/profiles/default/bin:/home/$USERNAME/.nix-profile/bin:/ho
 RUN curl -sSf https://raw.githubusercontent.com/infraflakes/kiru/main/install.sh | sh
 RUN curl -sSf https://raw.githubusercontent.com/infraflakes/sutils/main/install.sh | sh
 
-RUN git clone -b dev https://github.com/infraflakes/deploy ~/.config/kiru
+RUN git clone -b devenv https://github.com/infraflakes/deploy ~/.config/kiru
 
 RUN kiru sync
 
-RUN nix-shell -p stow home-manager --run 'kiru run bootstrap'
+RUN nix-shell -p stow home-manager --run 'kiru compile && kiru run bootstrap'
 
 ENV SHELL=/bin/fish
 
