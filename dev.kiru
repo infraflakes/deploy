@@ -1,6 +1,6 @@
 import (@(project_dir)/kiru/main.kiru);
 
-pr kiru {
+project kiru {
   var name = (kiru);
   fn ssh {
     switch $(test -f "$HOME/.ssh/id_ed25519.pub" && echo 0) {
@@ -25,8 +25,9 @@ pr kiru {
 
 import (@(project_dir)/portfolio/main.kiru);
 
-pr portfolio {
+project portfolio {
   var name = (infraflakes.github.io);
+
   fn ssh {
     switch $(test -f "$HOME/.ssh/id_ed25519.pub" && echo 0) {
       case (0) {
