@@ -1,50 +1,13 @@
-import (@(project_dir)/kiru/main.kiru);
+import(@(project_dir)/kiru/main.kiru);
 
 project kiru {
   var name = (kiru);
-  fn ssh {
-    switch $(test -f "$HOME/.ssh/id_ed25519.pub" && echo 0) {
-      case (0) {
-        log (SSH public key found...);
-        switch $(git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1") {
-          case (1) {
-            log (Switching url source...);
-            $(git remote set-url origin git@github.com:infraflakes/@(name).git);
-          };
-          case _ {
-            log (Source is already switched, or not enough condition.);
-          };
-        };
-      };
-      case _ {
-        log (Public key not found.);
-      };
-    };
-  };
+  ssh();
 };
 
-import (@(project_dir)/portfolio/main.kiru);
+import(@(project_dir)/portfolio/main.kiru);
 
 project portfolio {
   var name = (infraflakes.github.io);
-
-  fn ssh {
-    switch $(test -f "$HOME/.ssh/id_ed25519.pub" && echo 0) {
-      case (0) {
-        log (SSH public key found...);
-        switch $(git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1") {
-          case (1) {
-            log (Switching url source...);
-            $(git remote set-url origin git@github.com:infraflakes/@(name).git);
-          };
-          case _ {
-            log (Source is already switched, or not enough condition.);
-          };
-        };
-      };
-      case _ {
-        log (Public key not found.);
-      };
-    };
-  };
+  ssh();
 };

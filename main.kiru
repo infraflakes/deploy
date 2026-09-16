@@ -2,59 +2,60 @@ var home_dir = $(echo $HOME);
 var project_dir = (@(home_dir)/Projects);
 var config_dir = (@(home_dir)/.config);
 
+fn ssh {
+  switch($(test -f "$HOME/.ssh/id_ed25519.pub" && echo 0)) {
+    case(0) {
+      log(SSH public key found...);
+      switch($(git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1")) {
+        case(1) {
+          log(Switching url source...);
+          $(git remote set-url origin git@github.com:infraflakes/@(name).git);
+        };
+        default {
+          log(Source is already switched, or not enough condition.);
+        };
+      };
+    };
+    default {
+      log(Public key not found.);
+    };
+  };
+};
+
+project deploy {
+  var name = (deploy);
+  ssh();
+};
+
 project nix {
   fn eval {
-    log (Building flake home manager...);
+    log(Building flake home manager...);
     $(home-manager switch --flake .#nixenv@container);
   };
 };
 
 project dots {
   fn init {
-    var fish_exist = $(test -f ~/.config/fish/config.fish && echo "1");
-    switch fish_exist {
-      case (1) {
-        log (Symlinking with stow...);
+    switch($(test -f ~/.config/fish/config.fish && echo "1")) {
+      case(1) {
+        log(Symlinking with stow...);
         $(stow --adopt -t @(config_dir) config);
         $(git restore config/fish);
       };
-     case _ {
-        log (Symlinking with stow...);
+     default {
+        log(Symlinking with stow...);
         $(stow -t @(config_dir) config);
       };
     };
   };
 
   fn remove {
-    log (Removing stow's symlink...);
+    log(Removing stow's symlink...);
     $(stow -D -t @(config_dir) config);
   };
 };
 
-project deploy {
-  var name = (deploy);
-  fn ssh {
-    switch $(test -f "$HOME/.ssh/id_ed25519.pub" && echo 0) {
-      case (0) {
-        log (SSH public key found...);
-        switch $(git remote get-url origin 2>/dev/null | grep -q "^https://" && echo "1") {
-          case (1) {
-            log (Switching url source...);
-            $(git remote set-url origin git@github.com:infraflakes/@(name).git);
-          };
-          case _ {
-            log (Source is already switched, or not enough condition.);
-          };
-        };
-      };
-      case _ {
-        log (Public key not found.);
-      };
-    };
-  };
-};
-
-import (dev.kiru);
+import(dev.kiru);
 
 run ssh {
   deploy::ssh;
