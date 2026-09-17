@@ -1,31 +1,33 @@
+[profile.dev]
+source = "dev/main.kiru"
+output = "dev/kirufile"
 shell = "sh"
 timeout = 300
 
-[project.kiru]
+[profile.dev.project.kiru]
 url = "https://github.com/infraflakes/kiru.git"
 dir = "~/Projects/kiru"
 branch = "dev"
 direnv = true
 
-[project.portfolio]
+[profile.dev.project.portfolio]
 url = "https://github.com/infraflakes/infraflakes.github.io.git"
 dir = "~/Projects/portfolio"
 direnv = true
 
-[project.deploy]
-name = "deploy"
+[profile.dev.project.deploy]
 url = "https://github.com/infraflakes/deploy.git"
 dir = "~/.config/kiru"
 branch = "devenv"
 
-[project.dots]
+[profile.dev.project.dots]
 url = "https://github.com/infraflakes/dots.git"
 dir = "~/dots"
 
-[project.nix]
+[profile.dev.project.nix]
 url = "https://github.com/infraflakes/nixenv.git"
 dir = "~/nix"
 
-[project.svim]
+[profile.dev.project.svim]
 url = "https://github.com/infraflakes/svim.git"
 dir = "~/.config/nvim"
